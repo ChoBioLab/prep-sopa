@@ -16,7 +16,7 @@ This guide explains how to set up and run the SOPA (Spatial Omics Processing and
 ### 1. Set up prep-sopa Environment
 ```bash
 # Create conda environment for prep-sopa
-cd /sc/arion/projects/untreatedIBD/cache/tools/sopa/cholab-config/prep-sopa-run
+cd /sc/arion/projects/untreatedIBD/cache/tools/prep-sopa
 conda env create -f environment.yml
 ```
 
@@ -50,7 +50,7 @@ cp -r bin/baysor/* ~/.julia
 ## Directory Structure
 
 The SOPA configuration and setup tools are located at:
-```/sc/arion/projects/untreatedIBD/cache/tools/sopa/cholab-config```
+```/sc/arion/projects/untreatedIBD/cache/tools/prep-sopa```
 
 ## Setup Steps
 
@@ -69,7 +69,7 @@ The SOPA configuration and setup tools are located at:
    ```bash
    conda activate prep-sopa
 
-   python /sc/arion/projects/untreatedIBD/cache/tools/sopa/cholab-config/prep-sopa-run/main.py \
+   python /sc/arion/projects/untreatedIBD/cache/tools/prep-sopa/prep-sopa-run/main.py \
      --id <panel_id>/<run_id> \
      --config-name <your_config.yaml> \
      --project-dir <project_directory>
