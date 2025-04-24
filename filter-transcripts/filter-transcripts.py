@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 
-from pathlib import Path
-import pandas as pd
-import pyarrow.parquet as pq
+import argparse
 import logging
 import shutil
-from concurrent.futures import ThreadPoolExecutor
-from typing import List
-import argparse
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+from typing import List
+
+import pandas as pd
+import pyarrow.parquet as pq
 
 # Set up logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -34,10 +34,11 @@ def run_validation(filtered_dir: Path) -> bool:
             [
                 sys.executable,
                 str(validation_script),
-                "--filtered-dir", str(filtered_dir)
+                "--filtered-dir",
+                str(filtered_dir),
             ],
             capture_output=True,
-            text=True
+            text=True,
         )
 
         if result.returncode != 0:
@@ -53,18 +54,24 @@ def run_validation(filtered_dir: Path) -> bool:
         return False
 
 
-def filter_and_save_csv(source_path: Path, target_path: Path, dry_run: bool = False) -> None:
+def filter_and_save_csv(
+    source_path: Path, target_path: Path, dry_run: bool = False
+) -> None:
     """Filter and save CSV data with QV >= 20."""
     if dry_run:
         logger.info(f"[DRY RUN] Would process CSV file: {source_path}")
         return
     logger.info(f"Processing CSV file: {source_path}")
     df = pd.read_csv(source_path)
-    filtered_df = df[df['qv'] >= 20]
-    filtered_df.to_csv(target_path / "transcripts.csv.gz", index=False, compression='gzip')
+    filtered_df = df[df["qv"] >= 20]
+    filtered_df.to_csv(
+        target_path / "transcripts.csv.gz", index=False, compression="gzip"
+    )
 
 
-def filter_and_save_parquet(source_path: Path, target_path: Path, dry_run: bool = False) -> None:
+def filter_and_save_parquet(
+    source_path: Path, target_path: Path, dry_run: bool = False
+) -> None:
     """Filter and save Parquet data with QV >= 20."""
     if dry_run:
         logger.info(f"[DRY RUN] Would process Parquet file: {source_path}")
@@ -72,7 +79,7 @@ def filter_and_save_parquet(source_path: Path, target_path: Path, dry_run: bool 
     logger.info(f"Processing Parquet file: {source_path}")
     table = pq.read_table(source_path)
     df = table.to_pandas()
-    filtered_df = df[df['qv'] >= 20]
+    filtered_df = df[df["qv"] >= 20]
     filtered_df.to_parquet(target_path / "transcripts.parquet", index=False)
 
 
@@ -136,8 +143,9 @@ def find_run_directories(base_path: Path) -> List[Path]:
                 if not output_dir.is_dir():
                     continue
                 # Verify this is a valid run directory by checking for transcript files
-                if (output_dir / "transcripts.csv.gz").exists() or \
-                   (output_dir / "transcripts.parquet").exists():
+                if (output_dir / "transcripts.csv.gz").exists() or (
+                    output_dir / "transcripts.parquet"
+                ).exists():
                     run_dirs.append(output_dir)
     return run_dirs
 
@@ -145,23 +153,23 @@ def find_run_directories(base_path: Path) -> List[Path]:
 def main():
     # Set up argument parser
     parser = argparse.ArgumentParser(
-        description='Filter Xenium transcript data by QV scores'
+        description="Filter Xenium transcript data by QV scores"
     )
     parser.add_argument(
-        '--dry-run',
-        action='store_true',
-        help='Perform a dry run without making any changes'
+        "--dry-run",
+        action="store_true",
+        help="Perform a dry run without making any changes",
     )
     parser.add_argument(
-        '--base-path',
+        "--base-path",
         type=str,
         default="/sc/arion/projects/untreatedIBD/cache/nfs-data-registries/xenium-registry/oba-outputs",
-        help='Base directory containing Xenium runs'
+        help="Base directory containing Xenium runs",
     )
     parser.add_argument(
-        '--skip-validation',
-        action='store_true',
-        help='Skip validation after processing'
+        "--skip-validation",
+        action="store_true",
+        help="Skip validation after processing",
     )
     args = parser.parse_args()
 
@@ -180,10 +188,7 @@ def main():
 
     # Process runs in parallel using ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=4) as executor:
-        list(executor.map(
-            lambda x: process_run_directory(x, args.dry_run),
-            run_dirs
-        ))
+        list(executor.map(lambda x: process_run_directory(x, args.dry_run), run_dirs))
 
 
 if __name__ == "__main__":

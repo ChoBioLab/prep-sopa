@@ -1,14 +1,14 @@
 import logging
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, List
+
 import yaml
 
 
 def setup_logging() -> logging.Logger:
     """Configure and return logger instance."""
     logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s'
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
     return logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ def setup_logging() -> logging.Logger:
 logger = setup_logging()
 
 
-def flatten_dict(d: dict, parent_key: str = '', sep: str = '_') -> dict:
+def flatten_dict(d: dict, parent_key: str = "", sep: str = "_") -> dict:
     """Flatten a nested dictionary, joining keys with separator."""
     items = []
     for k, v in d.items():
@@ -43,7 +43,7 @@ def parse_sample_name(directory_name: str) -> str:
     """Extract sample ID from the directory name."""
     logger.debug(f"Parsing sample name from directory: {directory_name}")
     try:
-        parts = directory_name.replace('output-', '').split('__')
+        parts = directory_name.replace("output-", "").split("__")
         sample_name = parts[2]
         logger.debug(f"Extracted sample name: {sample_name}")
         return sample_name
@@ -56,10 +56,9 @@ def get_sample_directories(source_data_dir: Path) -> List[Path]:
     """Get all valid sample directories from the source data directory."""
     logger.info(f"Scanning for sample directories in: {source_data_dir}")
     sample_dirs = [
-        d for d in source_data_dir.iterdir()
-        if d.is_dir()
-        and d.name.startswith('output-')
-        and d.name != 'lsf_scripts'
+        d
+        for d in source_data_dir.iterdir()
+        if d.is_dir() and d.name.startswith("output-") and d.name != "lsf_scripts"
     ]
     logger.info(f"Found {len(sample_dirs)} sample directories")
     return sample_dirs

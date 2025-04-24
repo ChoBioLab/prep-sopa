@@ -1,6 +1,7 @@
-from pathlib import Path
 import os
 from datetime import datetime
+from pathlib import Path
+
 from .utils import logger
 
 
@@ -30,7 +31,7 @@ def create_lsf_script(
     proj_dir: str,
     run_dir: Path,
     params_file: Path,
-    max_ram: int
+    max_ram: int,
 ) -> None:
     """Generate LSF submission script for a single sample."""
     logger.info(f"Generating LSF script for sample: {sample_name}")
@@ -136,7 +137,7 @@ echo "Housekeeping completed. Output files moved to: $RUN_OUT_DIR"
 """
 
     logger.info(f"Writing LSF script to: {lsf_file}")
-    with open(lsf_file, 'w') as f:
+    with open(lsf_file, "w") as f:
         f.write(script_content)
 
     logger.info("Setting script permissions")
