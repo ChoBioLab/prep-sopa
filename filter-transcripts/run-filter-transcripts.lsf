@@ -14,7 +14,7 @@ CONDA_ENV=/sc/arion/projects/untreatedIBD/ctastad/conda/envs/prep-sopa
 
 ################################################################################
 
-source /hpc/packages/minerva-centos7/anaconda3/2018.12/etc/profile.d/conda.sh
+source /hpc/packages/minerva-centos7/anaconda3/2024.06/etc/profile.d/conda.sh
 conda init bash
 conda activate $CONDA_ENV
 
